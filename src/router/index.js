@@ -24,11 +24,18 @@ let router = new Router({
 /**
  * 路由前置钩子
  */
+/**
+ * 路由前置钩子
+ */
 router.beforeEach((to, from, next) => {
-  if(sessionStorage.role || to.path === '/'){
+  //如果用户未登陆且不是跳转登陆页
+  if(sessionStorage.role === undefined && to.path !== '/'){
+    //跳转登陆页
+    next('/')
+  }else{
+    //如果此路由需要验证
     if (to.meta.auth) {
       //如果当前角色有权限（权限信息加密后保存在session中，所以获取权限在sessionStorage中取）
-      //indexOf查找to.meta.role中第几个字符是sessionStorage.role,如果没有则返回-1
       if (to.meta.role.indexOf(sessionStorage.role) >= 0) {
         next()
       } else {
@@ -38,10 +45,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
-  }else {
-    next('/')
   }
-  //如果此路由需要验证
 
 })
 
